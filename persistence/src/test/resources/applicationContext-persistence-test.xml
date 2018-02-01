@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+			http://www.springframework.org/schema/data/mongo
+			http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+	<context:property-placeholder location="classpath:serverConfig.properties" />
+	<context:component-scan base-package="com.wy.persistence" />
+
+	<!-- dataSource -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		  destroy-method="close">
+		<property name="driverClass" value="${datasource.driverClassName}" />
+		<property name="jdbcUrl" value="${datasource.url}" />
+		<property name="user" value="${datasource.username}" />
+		<property name="password" value="${datasource.password}" />
+		<property name="initialPoolSize" value="${datasource.initialPoolSize}" />
+		<property name="minPoolSize" value="${datasource.minPollSize}" />
+		<property name="maxPoolSize" value="${datasource.maxPoolSize}" />
+		<property name="maxIdleTime" value="${datasource.maxIdleTime}" />
+		<property name="acquireIncrement" value="${datasource.acquireIncrement}" />
+		<property name="idleConnectionTestPeriod" value="${datasource.idleConnectionTestPeriod}" />
+		<property name="acquireRetryAttempts" value="${datasource.acquireRetryAttempts}" />
+		<property name="breakAfterAcquireFailure" value="${datasource.breakAfterAcquireFailure}" />
+		<property name="maxStatements" value="${datasource.maxStatements}" />
+		<property name="testConnectionOnCheckout" value="${datasource.testConnectionOnCheckout}" />
+	</bean>
+
+	<!-- sqlSession -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mapper/*Mapper.xml" />
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.wy.persistence.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	<!-- transaction -->
+	<bean id="transactionManager"
+		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"
+						  proxy-target-class="true" />
+
+</beans>

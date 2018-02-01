@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wy.persistence.dao.UserDao">
+	<resultMap id="BaseResultMap"
+		type="com.wy.persistence.entity.User">
+		<id property="id" column="id" />
+		<result property="username" column="username" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, username
+	</sql>
+	
+	<select id="findFirstUser" resultMap="BaseResultMap" >
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user limit 1
+    </select>
+
+	<insert id="insert" parameterType="com.wy.persistence.entity.User">
+		INSERT INTO
+		user (username)
+		VALUES (#{username})
+	</insert>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		DELETE FROM
+		user WHERE id = #{id}
+	</delete>
+</mapper>
