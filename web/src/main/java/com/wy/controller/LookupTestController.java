@@ -35,14 +35,13 @@ public class LookupTestController {
         return "method test4";
     }
 
-    @RequestMapping(value = "/test5", method = RequestMethod.GET)
+    @RequestMapping(value = "/test5", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String test5(){
         return "method test5";
     }
 
-
-    @RequestMapping(value = "/test5", method = {R})
+    @RequestMapping(value = "/test5", method = {RequestMethod.GET, RequestMethod.DELETE})
     @ResponseBody
     public String test6(){
         return "method test6";
