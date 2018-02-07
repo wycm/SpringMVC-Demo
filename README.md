@@ -2,14 +2,14 @@
 * 本文从源码层面简单讲解SpringMVC的处理器映射环节，也就是查找Controller详细过程。
 
 ## SpringMVC请求流程
-![](http://images2017.cnblogs.com/blog/1133483/201802/1133483-20180205104744466-2081267679.png)
+![](https://raw.githubusercontent.com/wycm/md-image/master/2018-02-06/1.png)
  * Controller查找在上图中对应的步骤1至2的过程
 
 ## SpringMVC初始化过程
 #### 理解初始化过程之前，先认识两个类
 1. RequestMappingInfo类，对RequestMapping注解封装。里面包含http请求头的相关信息。如uri、method、params、header等参数。一个对象对应一个RequestMapping注解
 2. HandlerMethod类，是对Controller的处理请求方法的封装。里面包含了该方法所属的bean对象、该方法对应的method对象、该方法的参数等。
-![](http://images2017.cnblogs.com/blog/1133483/201802/1133483-20180205104811248-601768711.png)
+![](https://raw.githubusercontent.com/wycm/md-image/master/2018-02-06/2.png)
 
 * 上图是RequestMappingHandlerMapping的继承关系。在SpringMVC初始化的时候，首先执行RequestMappingHandlerMapping中的afterPropertiesSet方法，然后会进入AbstractHandlerMethodMapping的afterPropertiesSet方法(line:93)，这个方法会进入当前类的initHandlerMethods方法（line:103）。这个方法的职责便是从applicationContext中扫描beans，然后从bean中查找并注册处理器方法，代码如下。<br>
 ```
@@ -159,7 +159,7 @@ public class UrlMapController {
 }
 ```
 * 初始化完成后，对应AbstractHandlerMethodMapping的urlMap的结构如下
-![](http://images2017.cnblogs.com/blog/1133483/201802/1133483-20180205104829029-1142770633.png)
+![](https://raw.githubusercontent.com/wycm/md-image/master/2018-02-06/3.png)
 * 以上便是SpringMVC初始化的主要过程
 ## 查找过程
 * 为了理解查找流程，带着一个问题来看，现有如下Controller
@@ -194,7 +194,7 @@ public class LookupTestController {
 }
 ```
 * 有如下请求
-![](http://images2017.cnblogs.com/blog/1133483/201802/1133483-20180205104835795-1096995550.png)
+![](https://raw.githubusercontent.com/wycm/md-image/master/2018-02-06/4.png)
 * 这个请求会进入哪一个方法？
 * web容器（Tomcat、jetty）接收请求后，交给DispatcherServlet处理。FrameworkServlet调用对应请求方法（eg:get调用doGet），然后调用processRequest方法。进入processRequest方法后，一系列处理后，在line:936进入doService方法。然后在Line856进入doDispatch方法。在line:896获取当前请求的处理器handler。然后进入AbstractHandlerMethodMapping的lookupHandlerMethod方法。代码如下
 ```
@@ -240,7 +240,7 @@ protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletReques
 }
 ```
 * 进入lookupHandlerMethod方法，其中lookupPath="/LookupTest/test1",根据lookupPath，也就是请求的uri。直接查找urlMap，获取直接匹配的RequestMappingInfo list。这里会匹配到3个RequestMappingInfo。如下
-![](http://images2017.cnblogs.com/blog/1133483/201802/1133483-20180205104850263-2097431257.png)
+![](https://raw.githubusercontent.com/wycm/md-image/master/2018-02-06/6.png)
 
 * 然后进入addMatchingMappings方法
 ```
@@ -312,4 +312,5 @@ public int compareTo(RequestMethodsRequestCondition other, HttpServletRequest re
 * 什么时候匹配通配符？当通过urlMap获取不到直接匹配value的RequestMappingInfo时才会走通配符匹配进入addMatchingMappings方法。
 
 ## 总结
+* 解析所使用代码已上传至github，https://github.com/wycm/SpringMVC-Demo
 * 以上源码是基于SpringMVC 3.2.2.RELEASE版本。以上便是SpringMVC请求查找的主要过程，希望对大家有帮助。本文可能有错误，希望读者能够指出来。
