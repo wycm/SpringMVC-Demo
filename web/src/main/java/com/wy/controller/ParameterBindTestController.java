@@ -1,8 +1,8 @@
 package com.wy.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -19,6 +19,13 @@ public class ParameterBindTestController {
     @RequestMapping("/test2")
     public String test2(User u){
         System.out.println(u.toString());
-        return "test1";
+        return "test2";
+    }
+
+    @ResponseBody
+    @RequestMapping("/test3/{id}")
+    public String test2(@PathVariable("id") int id){
+        System.out.println(id);
+        return "test3";
     }
 }
